@@ -1,0 +1,12 @@
+[package]
+name         = "cargo-tray"
+version      = "0.1.0"
+edition      = "2021"
+rust-version = "1.77"
+description  = "The chores every kidchenko tray app shares, as a cargo subcommand"
+authors      = ["kidchenko <kidchenko@gmail.com>"]
+license      = "MIT"
+repository   = "https://github.com/kidchenko/traykit"
+
+# No dependencies: it edits a few text files and runs git and cargo.
+[dependencies]
