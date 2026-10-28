@@ -73,14 +73,17 @@ let Some(signal) = traykit::single_instance::acquire() else { return };
 | `time`            | `LocalTime::now()`, for log lines and file names              |
 | `util`            | `shell_open`, `attach_console`, and `wide` on Windows         |
 
-While developing an app next to a traykit checkout, point cargo at the
-checkout instead of GitHub with a `.cargo/config.toml` above both (it is not
-in either repo):
+To change traykit and an app together, point cargo at the checkout instead
+of GitHub with a `.cargo/config.toml` above both (it is not in either repo):
 
 ```toml
 [patch."https://github.com/kidchenko/traykit"]
 traykit = { path = "traykit/traykit" }
 ```
+
+Take it out again before committing the app: while it is there, cargo writes
+the path into the app's Cargo.lock. Push traykit, then `cargo update -p
+traykit` in the app to move it to the new commit.
 
 ## Roadmap
 
