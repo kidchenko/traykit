@@ -53,9 +53,9 @@ traykit = { git = "https://github.com/kidchenko/traykit" }
 
 ```rust
 traykit::init(traykit::App {
-    name: "Print",
-    id: "print",
-    bundle_id: "com.kidchenko.print",
+    name: "Recorte",
+    id: "recorte",
+    bundle_id: "com.kidchenko.recorte",
     summary: "Snip a part of the screen, mark it up, copy it",
 });
 traykit::linfo!("started");
