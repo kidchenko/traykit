@@ -8,10 +8,8 @@ release workflow follows; see [Roadmap](#roadmap).
 
 ## Install
 
-The repo is private, so cargo fetches it with your git credentials:
-
 ```sh
-CARGO_NET_GIT_FETCH_WITH_CLI=true cargo install --git https://github.com/kidchenko/traykit cargo-tray
+cargo install --git https://github.com/kidchenko/traykit cargo-tray
 ```
 
 Or from a checkout: `cargo install --path cargo-tray`.
@@ -91,8 +89,8 @@ traykit` in the app to move it to the new commit.
   `build.ps1` build in every app today, with signing in one place.
 - `cargo tray new <name>`: a new app with packaging, CI and docs in place.
 - `notify` in the crate: the toasts Cota and SuaVez each draw.
-- Moving Cafe, Cantos, Cota, Luz, Porta, Sonus and SuaVez onto the crate.
+- Moving Cafe, Cota, Luz, Porta, Sonus and SuaVez onto the crate. Cantos and
+  Recorte are on it.
+- `autostart` on macOS 13+ through `SMAppService`, so the app shows up in
+  Login Items by name. Cantos keeps its own run-at-login until then.
 - A reusable release workflow the apps call with their name and bundle id.
-
-The crate and the workflow need this repo public for a public app: its CI
-cannot fetch a private dependency or call a private repo's workflow.
