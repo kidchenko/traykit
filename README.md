@@ -3,8 +3,8 @@
 Shared tooling for the kidchenko tray apps (Cafe, Cantos, Cota, Luz, Porta,
 Sonus, SuaVez), so a fix lands once instead of being copied into seven repos.
 
-Today it is one tool, `cargo tray`. A shared runtime crate and a reusable
-release workflow follow; see [Roadmap](#roadmap).
+Two parts: the `cargo tray` tool and the `traykit` runtime crate. A reusable
+release workflow follows; see [Roadmap](#roadmap).
 
 ## Install
 
@@ -41,14 +41,55 @@ heading (`## [Unreleased]` or `## Unreleased`). Then it:
 6. with `--push`, pushes the branch and the tag together, which starts the
    app's release workflow.
 
+## `traykit` crate
+
+The runtime modules every app used to copy, named after the app instead of
+hard-coding it:
+
+```toml
+[dependencies]
+traykit = { git = "https://github.com/kidchenko/traykit" }
+```
+
+```rust
+traykit::init(traykit::App {
+    name: "Print",
+    id: "print",
+    bundle_id: "com.kidchenko.print",
+    summary: "Snip a part of the screen, mark it up, copy it",
+});
+traykit::linfo!("started");
+let Some(signal) = traykit::single_instance::acquire() else { return };
+```
+
+| module            | what it does                                                  |
+|-------------------|---------------------------------------------------------------|
+| `dirs`            | `%APPDATA%\<Name>`, `~/Library/Application Support/<Name>`, `~/.config/<id>` |
+| `log`             | `<id>.log` there, rotated at 1 MB; `linfo!` and friends; `<ID>_LOG=debug` |
+| `config`          | `config.json` there for any serde type: BOM-tolerant load, atomic save |
+| `single_instance` | one copy at a time; a second launch summons the first         |
+| `autostart`       | Run key, LaunchAgent, or `~/.config/autostart` entry          |
+| `theme`           | is the taskbar / menu bar dark, and the accent colour         |
+| `time`            | `LocalTime::now()`, for log lines and file names              |
+| `util`            | `shell_open`, `attach_console`, and `wide` on Windows         |
+
+While developing an app next to a traykit checkout, point cargo at the
+checkout instead of GitHub with a `.cargo/config.toml` above both (it is not
+in either repo):
+
+```toml
+[patch."https://github.com/kidchenko/traykit"]
+traykit = { path = "traykit/traykit" }
+```
+
 ## Roadmap
 
 - `cargo tray bundle`: the .app, .dmg and installer that `build.sh` and
   `build.ps1` build in every app today, with signing in one place.
 - `cargo tray new <name>`: a new app with packaging, CI and docs in place.
-- `traykit` crate: the runtime modules every app copies (`log`,
-  `single_instance`, `autostart`, `notify`, `theme`, config load and save).
+- `notify` in the crate: the toasts Cota and SuaVez each draw.
+- Moving Cafe, Cantos, Cota, Luz, Porta, Sonus and SuaVez onto the crate.
 - A reusable release workflow the apps call with their name and bundle id.
 
-The last two wait for this repo to be public: a public app's CI cannot fetch
-a private dependency or call a private repo's workflow.
+The crate and the workflow need this repo public for a public app: its CI
+cannot fetch a private dependency or call a private repo's workflow.
